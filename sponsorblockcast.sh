@@ -38,8 +38,8 @@ get_segments () {
     curl -fs --get "https://sponsor.ajay.app/api/skipSegments" \
       --data "videoID=$id" --data "categories=$categories" > "$id".json
     [ -s "$id".json ] \
-      && echo "$(jq '.[].segment[1]' "$id".json | wc -l) skippable segments found for video $id" \
-      || echo "No skippable segments found for video $id"
+      && echo "$(jq '.[].segment[1]' "$id".json | wc -l) skippable segments found for video http://youtu.be/$id" \
+      || echo "No skippable segments found for video http://youtu.be/$id"
   fi
 }
 
@@ -93,7 +93,7 @@ watch () {
         jq --raw-output '.[] | (.segment|map_values(tostring)|join(" ")) + " " + .category' "$video_id".json 2> /dev/null |\
         while read -r start end category; do
           if [ "$(echo "($progress > $start) && ($progress < ($end - 5))" | bc)" -eq 1 ]; then
-            echo "Skipping $category from $start -> $end on $uuid"
+            echo "http://youtu.be/$video_id?t=$progress Skipping $category from $start -> $end on $uuid"
             go-chromecast -u "$uuid" seek-to "$end"
           fi
         done
